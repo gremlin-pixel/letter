@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Love Letter for Nupu 💌</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Comic Sans MS', cursive;
+      background: #fff0f5;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 50px auto;
+      background: rgba(255,255,255,0.9);
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+      position: relative;
+      z-index: 20;
+    }
+
+    h1 {
+      color: #e75480;
+      text-align: center;
+    }
+
+    p {
+      font-size: 18px;
+      line-height: 1.5;
+      color: #333;
+    }
+
+    .heart {
+      font-size: 40px;
+      color: red;
+      text-align: center;
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+      0%,100% { transform: scale(1); }
+      50% { transform: scale(1.2); }
+    }
+
+    .bg-cats {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: url('cats.png') repeat;
+      background-size: 200px;
+      opacity: 0.1;
+      z-index: 1;
+    }
+
+    .flowers-container, .hearts-container {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      overflow: hidden;
+      pointer-events: none;
+      z-index: 5;
+      backdrop-filter: blur(0.5px);
+    }
+
+    .flower-float {
+      position: absolute;
+      bottom: -60px;
+      font-size: 48px;
+      filter: drop-shadow(0 0 4px #ffcc00);
+      animation: floatUp 8s linear infinite;
+      z-index: 5;
+    }
+
+    .heart-float {
+      position: absolute;
+      bottom: -60px;
+      font-size: 24px;
+      color: #ff1493;
+      animation: floatUp 6s linear infinite;
+    }
+
+    @keyframes floatUp {
+      0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+      100% { transform: translateY(-120vh) rotate(360deg); opacity: 0; }
+    }
+
+    #fireworks-canvas {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 10;
+  pointer-events: none;
+  background: transparent; /* 🔥 this line fixes it */
+}
+
+  </style>
+</head>
+<body>
+  <div class="bg-cats"></div>
+  <canvas id="fireworks-canvas"></canvas>
+  <div class="flowers-container" id="flowersContainer"></div>
+  <div class="hearts-container" id="heartsContainer"></div>
+
+  <div class="container">
+    <h1>My Dearest Nupu 💗</h1>
+    <p>nupu sorry me bday me tujhe bana ke de nahi payi. tab me sikh he rahi thi. mujhe kehna tha ki <strong>I love u</strong> nupu. sachme tu best ha.</p>
+    <p>well hamne bohot ladai ki ha. even alag hone tak a gye the. par me sachme tere bina nahi reh sakti. so I am sorry jo bhi meine bola tujhe hurt kiya 😞</p>
+    <p>but i <strong>alabuuu</strong> nupu 💖</p>
+
+    <span class="heart">❤️</span>
+
+    <p style="text-align: center;">You're the sunshine on my cloudy days ☀️</p>
+    <p style="text-align: center;">Even when I mess up, I hope you know it’s always you in my heart 💗</p>
+    <p style="text-align: center;">Being apart taught me how much I need you by my side.</p>
+  </div>
+
+  <script>
+    // Fireworks
+    const canvas = document.getElementById('fireworks-canvas');
+    const ctx = canvas.getContext('2d');
+    canvas.width = innerWidth;
+    canvas.height = innerHeight;
+
+    class Firework {
+      constructor() { this.init(); }
+      init(){
+        this.x = Math.random()*canvas.width;
+        this.y = canvas.height;
+        this.targetY = Math.random()*(canvas.height/2);
+        this.speed = Math.random()*3 + 2;
+      }
+      update(){
+        this.y -= this.speed;
+        if(this.y <= this.targetY) {
+          fireworks.splice(fireworks.indexOf(this),1);
+          createParticles(this.x, this.y);
+        }
+      }
+      draw() {
+        ctx.beginPath();
+        ctx.strokeStyle = 'white';
+        ctx.moveTo(this.x, this.y);
+        ctx.lineTo(this.x, this.y + 10);
+        ctx.stroke();
+      }
+    }
+
+    class Particle {
+      constructor(x, y){
+        this.x = x; this.y = y;
+        this.speedX = (Math.random()-0.5)*4;
+        this.speedY = (Math.random()-0.5)*4;
+        this.alpha = 1;
+      }
+      update(){
+        this.x += this.speedX;
+        this.y += this.speedY;
+        this.alpha -= 0.02;
+      }
+      draw(){
+        ctx.beginPath();
+        ctx.fillStyle = `rgba(255,255,255,${this.alpha})`;
+        ctx.arc(this.x, this.y, 2, 0, Math.PI*2);
+        ctx.fill();
+      }
+    }
+
+    let fireworks = [], particles = [];
+    function createParticles(x,y){
+      for(let i=0; i<30; i++) particles.push(new Particle(x,y));
+    }
+
+    function loop(){
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      if(Math.random()<0.05) fireworks.push(new Firework());
+      fireworks.forEach(fw => { fw.update(); fw.draw(); });
+      particles.forEach((p,i)=>{p.update(); p.draw(); if(p.alpha<=0) particles.splice(i,1)});
+      requestAnimationFrame(loop);
+    }
+    loop();
+
+    // Flowers & Hearts Floating
+    function startFloating(){
+      const flowers = document.getElementById('flowersContainer');
+      const hearts = document.getElementById('heartsContainer');
+
+      setInterval(()=>{
+        const f = document.createElement('div');
+        f.className = 'flower-float';
+        f.style.left = Math.random()*100 + 'vw';
+        f.textContent = '🌻';
+        flowers.appendChild(f);
+        setTimeout(()=>f.remove(), 8000);
+      }, 800);
+
+      setInterval(()=>{
+        const h = document.createElement('div');
+        h.className = 'heart-float';
+        h.style.left = Math.random()*100 + 'vw';
+        h.textContent = '💖';
+        hearts.appendChild(h);
+        setTimeout(()=>h.remove(), 6000);
+      }, 600);
+    }
+    startFloating();
+  </script>
+</body>
+</html>
